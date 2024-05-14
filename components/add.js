@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('../assets/eldercare-app-61fdb-firebase-adminsdk-hjpco-313d907387.json');
+const serviceAccount = require('Bruh');
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
