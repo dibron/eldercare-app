@@ -33,6 +33,12 @@ const HomeScreen = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Admin Records</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleButtonPress("SeatAllocation")}
+      >
+        <Text style={styles.buttonText}>Seat Allocation</Text>
+      </TouchableOpacity>
     </View>
   );
 }
