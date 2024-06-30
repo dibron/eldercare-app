@@ -21,62 +21,52 @@ const CentreRoutingScreen = ({ navigation }) => {
   const [coordinates, setCoordinates] = useState([]);
   const [centreCoordinates, setCentreCoordinates] = useState(null);
 
-  useEffect(() => {
-    const fetchCoordinates = async () => {
-      try {
-        const q = query(
-          collection(db, "elderInfo"), // Replace with your collection name
-          where("centreN", "==", centreName),
-          where("svcType", "==", serviceType),
-          where("toFromCentreI", "==", toFromCentre),
-          where("weekDay", "==", day),
-          where("tripID", "==", parseInt(tripID))
-        );
-        const querySnapshot = await getDocs(q);
-        const documentsData = querySnapshot.docs.map((doc) => doc.data());
-        setDocuments(documentsData);
+  const onSubmit = async () => {
+    try {
+      const q = query(
+        collection(db, "elderInfo"), // Replace with your collection name
+        where("centreN", "==", centreName),
+        where("svcType", "==", serviceType),
+        where("toFromCentreI", "==", toFromCentre),
+        where("weekDay", "==", day),
+        where("tripID", "==", parseInt(tripID))
+      );
+      const querySnapshot = await getDocs(q);
+      const documentsData = querySnapshot.docs.map((doc) => doc.data());
+      setDocuments(documentsData);
 
-        const postalCodes = documentsData.map((doc) => doc.clientPostalCode);
-        const centrePostalCode = documentsData[0]?.centrePostalCode;
+      const postalCodes = documentsData.map((doc) => doc.clientPostalCode);
+      const centrePostalCode = documentsData[0]?.centrePostalCode;
 
-        const nameSurname = documentsData.map((doc) => doc.name_surname);
-        const transCapSubTypeN = documentsData.map(
-          (doc) => doc.trans_cap_sub_type_n
-        );
-        const clientSeqN = documentsData.map((doc) => doc.clientSeqN);
+      const nameSurname = documentsData.map((doc) => doc.nameSurname);
+      const transCapSubTypeN = documentsData.map((doc) => doc.transCapSubTypeN);
+      const clientSeqN = documentsData.map((doc) => doc.clientSeqN);
 
-        documentsData.forEach((doc, index) => {
-          console.log(`Client Seq: ${doc.clientSeqN}, Postal Code: ${doc.clientPostalCode}`);
+      documentsData.forEach((doc, index) => {
+        console.log(`Client Seq: ${doc.clientSeqN}, Postal Code: ${doc.clientPostalCode}`);
+      });
+
+      const clientCoordinates = await Promise.all(
+        postalCodes.map(convertPostalCodeToCoordinates)
+      );
+      setCoordinates(clientCoordinates);
+
+      if (centrePostalCode) {
+        const centreCoord = await convertPostalCodeToCoordinates(centrePostalCode);
+        setCentreCoordinates(centreCoord);
+
+        navigation.navigate("CentreRoutingMap", {
+          coordinates: clientCoordinates,
+          centreCoordinates: centreCoord,
+          nameSurname,
+          transCapSubTypeN,
+          clientSeqN,
         });
-
-        const clientCoordinates = await Promise.all(
-          postalCodes.map(convertPostalCodeToCoordinates)
-        );
-        setCoordinates(clientCoordinates);
-
-        if (centrePostalCode) {
-          const centreCoord = await convertPostalCodeToCoordinates(
-            centrePostalCode
-          );
-          setCentreCoordinates(centreCoord);
-
-          navigation.navigate("CentreRoutingMap", {
-            coordinates: clientCoordinates,
-            centreCoordinates: centreCoord,
-            nameSurname,
-            transCapSubTypeN,
-            clientSeqN,
-          });
-        }
-      } catch (error) {
-        console.error("Error:", error);
       }
-    };
-
-    if (centreName && serviceType && toFromCentre && day && tripID) {
-      fetchCoordinates();
+    } catch (error) {
+      console.error("Error:", error);
     }
-  }, [centreName, serviceType, toFromCentre, day, tripID, navigation]);
+  };
 
   const convertPostalCodeToCoordinates = async (postalCode) => {
     const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&postalcode=${postalCode}`;
@@ -97,10 +87,6 @@ const CentreRoutingScreen = ({ navigation }) => {
       console.error("Error fetching coordinates:", error);
       return null;
     }
-  };
-
-  const onSubmit = async () => {
-    // This function is handled in useEffect now
   };
 
   return (
