@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Dimensions, FlatList } from 'react-native';
 import MapView, { Marker, Polyline, Callout } from 'react-native-maps';
-import { CheckBox } from 'react-native-elements'; // Import CheckBox from react-native-elements
+import { CheckBox } from 'react-native-elements'; 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -20,7 +20,7 @@ const OsmDirectionsMap = ({ route }) => {
         return;
       }
 
-      // Sort coordinates based on clientSeqN
+     
       const sortedCoordinates = coordinates
         .map((coord, index) => ({ ...coord, seq: clientSeqN[index] }))
         .sort((a, b) => a.seq - b.seq)
@@ -39,8 +39,8 @@ const OsmDirectionsMap = ({ route }) => {
             longitude: coord[0]
           }));
           setRouteCoordinates(coordinates);
-          setDuration(data.routes[0].duration / 60); // Convert duration to minutes
-          // Initialize attendance state
+          setDuration(data.routes[0].duration / 60); 
+         
           setAttendance(new Array(coordinates.length).fill(false));
         } else {
           console.error('Failed to fetch directions:', data);
@@ -54,7 +54,7 @@ const OsmDirectionsMap = ({ route }) => {
   }, [coordinates, centreCoordinates, clientSeqN]);
 
   const handleCheckboxToggle = (index) => {
-    // Toggle attendance state at the specified index
+    
     setAttendance(prevAttendance => {
       const updatedAttendance = [...prevAttendance];
       updatedAttendance[index] = !updatedAttendance[index];
@@ -62,7 +62,6 @@ const OsmDirectionsMap = ({ route }) => {
     });
   };
 
-  // Define marker colors based on transCapSubTypeN (assuming Ambulant or Wheelchair)
   const getMarkerColor = (type) => {
     switch (type) {
       case 'Ambulant':
@@ -70,7 +69,7 @@ const OsmDirectionsMap = ({ route }) => {
       case 'Wheelchair':
         return 'green';
       default:
-        return 'black'; // Default color for unknown types
+        return 'black'; 
     }
   };
 
@@ -93,15 +92,15 @@ const OsmDirectionsMap = ({ route }) => {
           <Marker
             coordinate={centreCoordinates}
             title="Centre"
-            pinColor="blue" // Example color for centre marker
+            pinColor="blue" 
           />
-          {/* Render each marker with a different key to ensure proper rendering */}
+    
           {coordinates.map((coord, index) => (
             <Marker
               key={`marker-${index}`}
               coordinate={coord}
               title={`Client Seq: ${clientSeqN && clientSeqN[index] !== undefined ? clientSeqN[index] : 'Unknown'}`}
-              pinColor={getMarkerColor(transCapSubTypeN[index])} // Set color based on transCapSubTypeN
+              pinColor={getMarkerColor(transCapSubTypeN[index])} 
             />
           ))}
           {routeCoordinates.length > 0 && (

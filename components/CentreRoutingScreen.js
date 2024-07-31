@@ -9,14 +9,14 @@ import {
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import db from "./firebase-config"; // Ensure the path is correct based on your file structure
+import db from "./firebase-config"; 
 
 const CentreRoutingScreen = ({ navigation }) => {
   const [centreName, setCentreName] = useState("");
   const [serviceType, setServiceType] = useState("");
   const [toFromCentre, setToFromCentre] = useState("");
   const [day, setDay] = useState("");
-  const [tripID, setTripID] = useState(""); // Initial value should be a number
+  const [tripID, setTripID] = useState(""); 
   const [documents, setDocuments] = useState([]);
   const [coordinates, setCoordinates] = useState([]);
   const [centreCoordinates, setCentreCoordinates] = useState(null);
